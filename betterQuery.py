@@ -1,5 +1,3 @@
-import MySQLdb
-import calendar
 
 db_host="localhost"
 db_name="nov_meta"
@@ -8,6 +6,9 @@ month=12
 year=2017
 
 import IPython
+
+import MySQLdb
+import calendar
 
 class Context:
     def __init__(self, db_user, db_host, db_name, merchant_id, month, year):
@@ -45,7 +46,7 @@ def net_montly_plan_charge_per_day(target):
         else:
             raise ValueError("Unexpected charge type: {}".format(charge_type))
 
-    m = (owes - is_owed)/days_in_month;
+    m = owes/days_in_month;
     b = -is_owed
 
     # at 0 this gives the total adjustment amount

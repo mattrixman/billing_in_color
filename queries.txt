@@ -1,0 +1,56 @@
+
+
+
+SELECT merchant_id, charge_id, merchant_plan_charge.created_time, amount, status, type, plan_charge_type
+    FROM charge
+    INNER JOIN merchant_plan_charge
+        ON merchant_plan_charge.charge_id = charge.id
+WHERE merchant_id = 194013
+AND merchant_plan_charge.created_time > '2017-11-01'
+AND merchant_plan_charge.created_time < '2018-01-01'
+ORDER BY merchant_plan_charge.created_time DESC
+;
+
+
+SELECT app_id, merchant_id, charge_id, mac.created_time
+    FROM merchant_app_charge mac 
+        JOIN merchant_app ma
+            ON ma.id = mac.merchant_app_id
+            AND merchant_id = 194013
+ORDER BY mac.created_time
+;
+
+-- get app charges by merchant
+SELECT mac.created_time, app_id, merchant_id, charge_id, amount
+    FROM merchant_app_charge mac 
+        JOIN merchant_app ma
+            ON ma.id = mac.merchant_app_id
+            AND merchant_id = 194013
+        JOIN charge c
+            ON c.id = mac.charge_id
+            AND MONTH(c.created_time) = 11
+;
+
+-- count subscription app charges by merchant
+select merchant_id, count(merchant_id)
+    from app_subscription_event_archive asea
+    JOIN merchant_app ma
+        ON ma.id = asea.merchant_app_id
+    JOIN charge c
+        ON c.id = asea.app_line_item_id
+        AND c.status != 'CANCELLED'
+GROUP BY merchant_id
+ORDER BY count(merchant_id) DESC
+LIMIT 50
+;
+
+-- get subscription app charges by merchant
+SELECT app_id, merchant_id, amount, due_time, event_type, status, ma.created_time
+FROM app_subscription_event_archive asea
+    JOIN merchant_app ma
+        ON ma.id = asea.merchant_app_id
+        AND ma.merchant_id = 3257
+    JOIN charge c
+        ON c.id = asea.app_line_item_id
+ORDER BY ma.created_time
+;
